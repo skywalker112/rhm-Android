@@ -27,21 +27,10 @@ public class AM2302
         String date = text.substring(0,pipe_position-1).trim();
         String temp = text.substring(temp_position+TEMP.length(), humidity_position).trim();
         String humidity = text.substring(humidity_position+HUMIDITY.length(), text.length()).trim();
-        return new String[] {date, temp, humidity};
+        return new String[] {date, temp.substring(0, temp.length()-1), humidity.substring(0, humidity.length()-1)};
     }
 
-    private static String createResponse(String [] info)
-    {
-        if(info.length != 3)
-            return "FAILED";
-
-
-        return "Time of measure: " + info[0] + "\n" +
-                "Temperature: " + info[1] + "\n" +
-                "Humanidity: " + info[2] + "\n";
-    }
-
-    public static String infoUpdate() throws IOException
+    public static String [] infoUpdate() throws IOException
     {
         byte[] buffer = new byte[100];
         String[] response;
@@ -64,7 +53,7 @@ public class AM2302
             socket.send(sendPacket);
 
         } catch (Exception e) {
-            return "Socket failed while sending request!";
+            return new String[]{"Socket failed while sending request!"};
 
         } finally {
 
@@ -73,10 +62,10 @@ public class AM2302
                 socket.receive(receivePacket);
 
             } catch(SocketTimeoutException e) {
-                return "Socket timeout while waiting for response!";
+                return new String[]{"Socket timeout while waiting for response!"};
 
             } catch (Exception e) {
-                return "Socket while waiting for response!";
+                return new String[]{"Socket while waiting for response!"};
 
             } finally {
                 String serverResponse = new String(receivePacket.getData());
@@ -84,6 +73,6 @@ public class AM2302
             }
         }
         socket.close();
-        return createResponse(response);
+        return response;
     }
 }

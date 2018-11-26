@@ -1,5 +1,6 @@
 package com.example.bpr.app2;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -9,6 +10,13 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import lecho.lib.hellocharts.model.PieChartData;
+import lecho.lib.hellocharts.model.SliceValue;
+import lecho.lib.hellocharts.view.PieChartView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-
+        updateInformation();
     }
 
     @Override
@@ -37,8 +45,31 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private static Boolean ready = true;
-    public void buttonUpdateClick(View v){
+    private void printChart(String [] data, TextView textViewToChange){
+
+        Float huminidity = Float.parseFloat(data[2]);
+
+        PieChartView pieChartView = findViewById(R.id.huminidity_chart);
+        List<SliceValue> pieData = new ArrayList<>();
+
+
+
+
+        pieData.add(new SliceValue(huminidity, Color.GREEN).setLabel(huminidity + " %"));
+        pieData.add(new SliceValue(100-huminidity, Color.GRAY).setLabel(""));
+        PieChartData pieChartData = new PieChartData(pieData);
+
+        pieChartData.setHasLabels(true).setValueLabelTextSize(14);
+        pieChartView.setPieChartData(pieChartData);
+        //pieChartData.setHasLabels(true);
+
+
+
+        textViewToChange.setText("Huminidity");
+
+    }
+
+    private void updateInformation(){
 
         if(!ready) return;
 
@@ -49,8 +80,9 @@ public class MainActivity extends AppCompatActivity {
 
         try{
             AM2302 var = new AM2302();
-            String result = var.infoUpdate();
-            textViewToChange.setText(result);
+            String [] result = var.infoUpdate();
+            //textViewToChange.setText(result);
+            printChart(result, textViewToChange);
         }
         catch (Exception e) {
             textViewToChange.setText("Exception occured in:  buttonUpdateClick function");
@@ -58,6 +90,14 @@ public class MainActivity extends AppCompatActivity {
         }
         //textViewToChange.setText("Waiting...");
         ready = true;
+
+    }
+
+
+    private static Boolean ready = true;
+    public void buttonUpdateClick(View v){
+
+        updateInformation();
     }
 
 

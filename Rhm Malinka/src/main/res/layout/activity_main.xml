@@ -30,4 +30,10 @@
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@android:drawable/ic_dialog_email" />
 
+    <lecho.lib.hellocharts.view.PieChartView
+        android:id="@+id/huminidity_chart"
+        android:layout_gravity="center"
+        android:layout_width="200dp"
+        android:layout_height="200dp" />
+
 </android.support.design.widget.CoordinatorLayout>
