@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -12,25 +12,25 @@
         android:id="@+id/UPDATE"
         android:layout_width="127dp"
         android:layout_height="62dp"
-        android:layout_marginBottom="100dp"
+
+
+        android:layout_alignParentBottom="true"
+
+
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp"
         android:onClick="buttonUpdateClick"
-        android:text="UPDATE"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:text="UPDATE" />
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="262dp"
-        android:layout_height="119dp"
-        android:layout_marginBottom="4dp"
-        android:text="information"
-        app:layout_constraintBottom_toTopOf="@+id/UPDATE"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="NA" />
+        android:textSize="25dp"
+        android:textColor="@color/colorPrimary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="476dp"
+        android:text="Date to show" />
 
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>
