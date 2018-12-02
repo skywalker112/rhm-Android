@@ -1,9 +1,10 @@
 package com.example.bpr.app2;
 
 import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -18,7 +19,10 @@ import lecho.lib.hellocharts.model.PieChartData;
 import lecho.lib.hellocharts.model.SliceValue;
 import lecho.lib.hellocharts.view.PieChartView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SensorEventListener {
+
+    private Thermometer thermometer;
+    private float temperature;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +30,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
+        setContentView(R.layout.activity_main);
+        thermometer = (Thermometer) findViewById(R.id.thermometer);
+
 
         updateInformation();
     }
@@ -40,22 +49,20 @@ public class MainActivity extends AppCompatActivity {
     private void printChart(String [] data, TextView textViewToChange){
 
         Float huminidity = Float.parseFloat(data[2]);
+        Float temperature = Float.parseFloat(data[1]);
 
-        PieChartView pieChartView = findViewById(R.id.huminidity_chart);
+        PieChartView pieChartView = findViewById(R.id.humChart);
         List<SliceValue> pieData = new ArrayList<>();
 
-
-
-
-        pieData.add(new SliceValue(huminidity, Color.GREEN).setLabel(huminidity + " %"));
-        pieData.add(new SliceValue(100-huminidity, Color.GRAY).setLabel(""));
+        pieData.add(new SliceValue(huminidity, getResources().getColor(R.color.green)).setLabel(huminidity + " %"));
+        pieData.add(new SliceValue(100-huminidity, getResources().getColor(R.color.blue_gray)).setLabel(""));
         PieChartData pieChartData = new PieChartData(pieData);
 
         pieChartData.setHasLabels(true).setValueLabelTextSize(14);
         pieChartView.setPieChartData(pieChartData);
-        //pieChartData.setHasLabels(true);
+        pieChartData.setHasLabels(true);
 
-
+        thermometer.setCurrentTemp(temperature);
 
         textViewToChange.setText(data[0]);
 
@@ -107,5 +114,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
     }
 }

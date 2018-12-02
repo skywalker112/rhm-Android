@@ -12,11 +12,7 @@
         android:id="@+id/UPDATE"
         android:layout_width="127dp"
         android:layout_height="62dp"
-
-
         android:layout_alignParentBottom="true"
-
-
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="50dp"
         android:onClick="buttonUpdateClick"
@@ -24,13 +20,15 @@
 
     <TextView
         android:id="@+id/textView"
-        android:textSize="25dp"
+        android:text="Date to show"
         android:textColor="@color/colorPrimary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="476dp"
-        android:text="Date to show" />
+        android:textSize="25dp" />
+
+
+
+
 
 </RelativeLayout>

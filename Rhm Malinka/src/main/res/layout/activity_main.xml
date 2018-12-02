@@ -2,9 +2,9 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@drawable/wallpaper"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/wallpaper"
     tools:context=".MainActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -23,10 +23,49 @@
 
     <include layout="@layout/content_main" />
 
+
+
     <lecho.lib.hellocharts.view.PieChartView
-        android:id="@+id/huminidity_chart"
-        android:layout_gravity="center"
+        android:id="@+id/humChart"
         android:layout_width="200dp"
-        android:layout_height="200dp" />
+        android:layout_height="200dp"
+        android:layout_gravity="center|right"
+        android:layout_marginHorizontal="10dp" />
+
+    <TextView
+        android:id="@+id/humChartTextLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="120dp"
+        android:text="Huminidity"
+        android:textSize="25dp"
+        android:textStyle="bold" />
+
+    <com.example.bpr.app2.Thermometer
+        android:id="@+id/thermometer"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_gravity="center|left"
+
+        android:layout_width="100dp"
+        android:layout_height="200dp"
+        android:layout_marginLeft="10dp"
+        app:innerColor="@color/innerColor"
+        app:middleColor="@color/middleColor"
+        app:outerColor="@color/outerColor"/>
+
+    <TextView
+        android:id="@+id/tempChartTextLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="120dp"
+        android:text="Temperature"
+        android:textSize="25dp"
+        android:textStyle="bold" />
+
 
 </android.support.design.widget.CoordinatorLayout>
