@@ -31,6 +31,7 @@
         android:layout_gravity="right"
         android:layout_marginRight="10dp"
         android:layout_marginTop="120dp"
+        android:outlineSpotShadowColor="@color/blue_gray"
         android:text="Huminidity"
         android:textSize="25dp"
         android:textStyle="bold" />
@@ -43,7 +44,7 @@
         android:layout_width="100dp"
         android:layout_height="200dp"
         android:layout_marginLeft="10dp"
-        app:innerColor="@color/innerColor"
+        app:innerColor="@color/yellow"
         app:middleColor="@color/middleColor"
         app:outerColor="@color/outerColor"/>
 

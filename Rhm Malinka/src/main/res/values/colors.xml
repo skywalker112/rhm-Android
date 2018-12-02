@@ -10,4 +10,8 @@
     <color name="innerColor">#4BAD26</color>
     <color name="middleColor">#B6F3EB</color>
     <color name="outerColor">#4B4E4A</color>
+    <color name="huminidity_rest">#092A24</color>
+    <color name="yellow">#F2DB67</color>
+
+
 </resources>

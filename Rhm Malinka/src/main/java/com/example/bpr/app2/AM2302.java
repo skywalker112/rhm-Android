@@ -4,6 +4,8 @@ import java.net.InetAddress;
 import java.net.DatagramSocket;
 import java.net.DatagramPacket;
 import java.io.*;
+import java.net.SocketAddress;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 
@@ -30,7 +32,41 @@ public class AM2302
         return new String[] {date, temp.substring(0, temp.length()-1), humidity.substring(0, humidity.length()-1)};
     }
 
-    public static String [] infoUpdate() throws IOException
+
+    private  static String [] result;
+
+    public static String [] infoUpdate() throws IOException {
+
+        Thread thread = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                try  {
+
+                    result = infoUpdateNewThread();
+
+                } catch (Exception e) {
+                    result = new String[]{"Exception while creating new thread!"};
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        thread.start();
+
+        try{
+
+            thread.join();
+
+        } catch (InterruptedException e){
+            result = new String[]{"InterruptedException while trying join!"};
+        }
+
+
+        return result;
+    }
+
+    public static String [] infoUpdateNewThread() throws IOException
     {
         byte[] buffer = new byte[100];
         String[] response;
@@ -38,7 +74,7 @@ public class AM2302
 /*
         try {
             IPAddress = InetAddress.getByName(ADDRESS);
-        } catch (Exception e) {
+        } catch (Exception e) {z
             return "Cannot resolve the address!";
         }
 
@@ -49,7 +85,6 @@ public class AM2302
 
 
         try {
-
             socket.send(sendPacket);
 
         } catch (Exception e) {
@@ -58,14 +93,17 @@ public class AM2302
         } finally {
 
             try {
-                socket.setSoTimeout(SOCKET_TIMEOUT);
+                //socket.setSoTimeout(SOCKET_TIMEOUT);
                 socket.receive(receivePacket);
 
             } catch(SocketTimeoutException e) {
                 return new String[]{"Socket timeout while waiting for response!"};
 
-            } catch (Exception e) {
-                return new String[]{"Socket while waiting for response!"};
+            } catch (SocketException e) {
+                return new String[]{"SocketException  while waiting for response!" + e.getMessage()};
+
+            }catch (Exception e) {
+                return new String[]{"Socket failed while waiting for response! " + e.toString()};
 
             } finally {
                 String serverResponse = new String(receivePacket.getData());

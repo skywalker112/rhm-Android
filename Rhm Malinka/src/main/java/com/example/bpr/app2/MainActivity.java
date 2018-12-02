@@ -1,5 +1,6 @@
 package com.example.bpr.app2;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -12,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.os.Handler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +31,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-
-        setContentView(R.layout.activity_main);
         thermometer = (Thermometer) findViewById(R.id.thermometer);
+
+        // initialize pieChartView
+        PieChartView pieChartView = findViewById(R.id.humChart);
+        List<SliceValue> pieData = new ArrayList<>();
+        pieData.add(new SliceValue(100, getResources().getColor(R.color.huminidity_rest)).setLabel(""));
+        PieChartData pieChartData = new PieChartData(pieData);
+        pieChartView.setPieChartData(pieChartData);
 
 
         buttonUpdateClick(findViewById(R.id.updateButton));
@@ -61,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             List<SliceValue> pieData = new ArrayList<>();
 
             pieData.add(new SliceValue(huminidity, getResources().getColor(R.color.green)).setLabel(huminidity + " %"));
-            pieData.add(new SliceValue(100-huminidity, getResources().getColor(R.color.blue_gray)).setLabel(""));
+            pieData.add(new SliceValue(100-huminidity, getResources().getColor(R.color.huminidity_rest)).setLabel(""));
             PieChartData pieChartData = new PieChartData(pieData);
 
             pieChartData.setHasLabels(true).setValueLabelTextSize(14);
@@ -102,19 +107,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static Boolean ready = true;
     public void buttonUpdateClick(View buttonUpdate){
 
-        //if(ready == false) return;
+        if(ready == false) return;
+
         View loadingPanel = findViewById(R.id.loadingPanel);
+        final TextView debug = (TextView) findViewById(R.id.debug);
+        debug.setText("");
 
-
-        setVisible(buttonUpdate, false);
         setVisible(loadingPanel, true);
+        setVisible(buttonUpdate, false);
 
         updateInformation();
 
-        setVisible(buttonUpdate, false);
-        setVisible(loadingPanel, true);
-
-
+        setVisible(loadingPanel, false);
+        setVisible(buttonUpdate, true);
     }
 
 
@@ -125,7 +130,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         else{
             element.setVisibility(View.INVISIBLE);
         }
-        element.invalidate();
     }
 
 
