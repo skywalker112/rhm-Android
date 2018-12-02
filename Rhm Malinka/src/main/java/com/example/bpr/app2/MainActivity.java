@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -28,16 +29,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
 
 
         setContentView(R.layout.activity_main);
         thermometer = (Thermometer) findViewById(R.id.thermometer);
 
 
-        updateInformation();
-    }
+        buttonUpdateClick(findViewById(R.id.updateButton));
+}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -46,59 +46,87 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         return true;
     }
 
-    private void printChart(String [] data, TextView textViewToChange){
+    private void printChart(String [] data, TextView debug){
 
-        Float huminidity = Float.parseFloat(data[2]);
-        Float temperature = Float.parseFloat(data[1]);
+        if(data.length != 3){
+            debug.setText(data[0]);
+        }
+        else{
+            Float huminidity = Float.parseFloat(data[2]);
+            Float temperature = Float.parseFloat(data[1]);
+            String date = data[0];
 
-        PieChartView pieChartView = findViewById(R.id.humChart);
-        List<SliceValue> pieData = new ArrayList<>();
+            // huminidity
+            PieChartView pieChartView = findViewById(R.id.humChart);
+            List<SliceValue> pieData = new ArrayList<>();
 
-        pieData.add(new SliceValue(huminidity, getResources().getColor(R.color.green)).setLabel(huminidity + " %"));
-        pieData.add(new SliceValue(100-huminidity, getResources().getColor(R.color.blue_gray)).setLabel(""));
-        PieChartData pieChartData = new PieChartData(pieData);
+            pieData.add(new SliceValue(huminidity, getResources().getColor(R.color.green)).setLabel(huminidity + " %"));
+            pieData.add(new SliceValue(100-huminidity, getResources().getColor(R.color.blue_gray)).setLabel(""));
+            PieChartData pieChartData = new PieChartData(pieData);
 
-        pieChartData.setHasLabels(true).setValueLabelTextSize(14);
-        pieChartView.setPieChartData(pieChartData);
-        pieChartData.setHasLabels(true);
+            pieChartData.setHasLabels(true).setValueLabelTextSize(14);
+            pieChartView.setPieChartData(pieChartData);
+            pieChartData.setHasLabels(true);
 
-        thermometer.setCurrentTemp(temperature);
+            // temperature
+            final TextView showTemp = (TextView) findViewById(R.id.tempShow);
+            showTemp.setText(temperature + " ℃");
+            thermometer.setCurrentTemp(temperature);
 
-        textViewToChange.setText(data[0]);
-
+            // date
+            final TextView showDate = (TextView) findViewById(R.id.dateTextView);
+            showDate.setText(date);
+        }
     }
 
+
     private void updateInformation(){
-
-        if(!ready) return;
-
-       final TextView textViewToChange = (TextView) findViewById(R.id.textView);
-
+        final TextView debug = (TextView) findViewById(R.id.debug);
+        debug.setText("");
         ready = false;
-        textViewToChange.setText("Run command");
 
         try{
             AM2302 var = new AM2302();
             String [] result = var.infoUpdate();
-            //textViewToChange.setText(result);
-            printChart(result, textViewToChange);
+            printChart(result, debug);
         }
         catch (Exception e) {
-            textViewToChange.setText("Exception occured in:  buttonUpdateClick function");
+            debug.setText("Exception occured in:  buttonUpdateClick function");
             ready = true;
         }
-        //textViewToChange.setText("Waiting...");
-        ready = true;
 
+        ready = true;
     }
 
 
     private static Boolean ready = true;
-    public void buttonUpdateClick(View v){
+    public void buttonUpdateClick(View buttonUpdate){
+
+        //if(ready == false) return;
+        View loadingPanel = findViewById(R.id.loadingPanel);
+
+
+        setVisible(buttonUpdate, false);
+        setVisible(loadingPanel, true);
 
         updateInformation();
+
+        setVisible(buttonUpdate, false);
+        setVisible(loadingPanel, true);
+
+
     }
 
+
+    private void setVisible(View element, Boolean state){
+        if(state == true){
+            element.setVisibility(View.VISIBLE);
+        }
+        else{
+            element.setVisibility(View.INVISIBLE);
+        }
+        element.invalidate();
+    }
 
 
     @Override
