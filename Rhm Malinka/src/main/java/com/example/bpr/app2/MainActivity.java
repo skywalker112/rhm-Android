@@ -1,19 +1,13 @@
 package com.example.bpr.app2;
 
-import android.content.Intent;
-import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.widget.TextView;
-import android.os.Handler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +16,15 @@ import lecho.lib.hellocharts.model.PieChartData;
 import lecho.lib.hellocharts.model.SliceValue;
 import lecho.lib.hellocharts.view.PieChartView;
 
-public class MainActivity extends AppCompatActivity implements SensorEventListener {
+public class MainActivity extends AppCompatActivity implements Listener {
 
     private Thermometer thermometer;
     private float temperature;
+
+
+    private View loadingPanel, buttonUpdate;
+    private TextView debug;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +32,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         setContentView(R.layout.activity_main);
         thermometer = (Thermometer) findViewById(R.id.thermometer);
 
+        loadingPanel = findViewById(R.id.loadingPanel);
+        buttonUpdate = findViewById(R.id.updateButton);
+        debug = (TextView) findViewById(R.id.debug);
+
         // initialize pieChartView
         PieChartView pieChartView = findViewById(R.id.humChart);
         List<SliceValue> pieData = new ArrayList<>();
         pieData.add(new SliceValue(100, getResources().getColor(R.color.huminidity_rest)).setLabel(""));
         PieChartData pieChartData = new PieChartData(pieData);
         pieChartView.setPieChartData(pieChartData);
-
 
         buttonUpdateClick(findViewById(R.id.updateButton));
 }
@@ -73,34 +75,29 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             pieChartView.setPieChartData(pieChartData);
             pieChartData.setHasLabels(true);
 
+            // date
+            TextView showDate = (TextView) findViewById(R.id.dateTextView);
+            showDate.setText(date);
+
             // temperature
-            final TextView showTemp = (TextView) findViewById(R.id.tempShow);
+            TextView showTemp = (TextView) findViewById(R.id.tempShow);
             showTemp.setText(temperature + " ℃");
             thermometer.setCurrentTemp(temperature);
-
-            // date
-            final TextView showDate = (TextView) findViewById(R.id.dateTextView);
-            showDate.setText(date);
         }
     }
 
 
     private void updateInformation(){
-        final TextView debug = (TextView) findViewById(R.id.debug);
+        TextView debug = (TextView) findViewById(R.id.debug);
         debug.setText("");
-        ready = false;
 
         try{
-            AM2302 var = new AM2302();
-            String [] result = var.infoUpdate();
-            printChart(result, debug);
+            AM2302 var = new AM2302(this);
+            var.infoUpdate();
         }
         catch (Exception e) {
             debug.setText("Exception occured in:  buttonUpdateClick function");
-            ready = true;
         }
-
-        ready = true;
     }
 
 
@@ -109,19 +106,27 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         if(ready == false) return;
 
-        View loadingPanel = findViewById(R.id.loadingPanel);
-        final TextView debug = (TextView) findViewById(R.id.debug);
-        debug.setText("");
-
         setVisible(loadingPanel, true);
         setVisible(buttonUpdate, false);
 
         updateInformation();
-
-        setVisible(loadingPanel, false);
-        setVisible(buttonUpdate, true);
     }
 
+    @Override
+    public void onResponseReceived(final String[] result)
+    {
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+
+                printChart(result, debug);
+                setVisible(buttonUpdate, true);
+                setVisible(loadingPanel, false);
+
+            }
+        });
+    }
 
     private void setVisible(View element, Boolean state){
         if(state == true){
@@ -131,7 +136,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             element.setVisibility(View.INVISIBLE);
         }
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -148,13 +152,4 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
 }
